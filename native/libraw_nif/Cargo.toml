@@ -1,0 +1,15 @@
+[package]
+name = "libraw_nif"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "libraw_nif"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.33"
+
+[build-dependencies]
+cc = "1"
+pkg-config = "0.3"
