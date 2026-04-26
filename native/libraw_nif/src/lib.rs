@@ -1,7 +1,7 @@
 mod error;
 mod raw;
 
-use rustler::{Encoder, Env, NifResult, OwnedBinary, Term};
+use rustler::{Encoder, Env, OwnedBinary, Term};
 use rustler::types::atom;
 use rustler::types::map::map_new;
 
@@ -34,7 +34,7 @@ mod atoms {
 #[rustler::nif(schedule = "DirtyCpu")]
 fn decode_nif<'a>(
     env: Env<'a>,
-    path: Vec<u8>,
+    path: String,
     use_camera_wb: i32,
     no_auto_bright: i32,
     output_bps: i32,
@@ -50,17 +50,15 @@ fn decode_nif<'a>(
 
 fn decode_inner<'a>(
     env: Env<'a>,
-    path: Vec<u8>,
+    path: String,
     use_camera_wb: i32,
     no_auto_bright: i32,
     output_bps: i32,
     gamma0: f64,
     gamma1: f64,
 ) -> Result<Term<'a>, LibRawError> {
-    let path_str = String::from_utf8(path).map_err(|_| LibRawError::InvalidPath)?;
-
     let handle = RawHandle::new()?;
-    handle.open(&path_str)?;
+    handle.open(&path)?;
     handle.set_params(use_camera_wb, no_auto_bright, output_bps, gamma0, gamma1);
     handle.unpack()?;
     handle.dcraw_process()?;
@@ -86,7 +84,7 @@ fn decode_inner<'a>(
 ///
 /// Runs on a Dirty CPU Scheduler because file I/O can block.
 #[rustler::nif(schedule = "DirtyCpu")]
-fn metadata_nif<'a>(env: Env<'a>, path: Vec<u8>) -> Term<'a> {
+fn metadata_nif<'a>(env: Env<'a>, path: String) -> Term<'a> {
     let result = metadata_inner(env, path);
     match result {
         Ok(term) => (atoms::ok(), term).encode(env),
@@ -94,11 +92,9 @@ fn metadata_nif<'a>(env: Env<'a>, path: Vec<u8>) -> Term<'a> {
     }
 }
 
-fn metadata_inner<'a>(env: Env<'a>, path: Vec<u8>) -> Result<Term<'a>, LibRawError> {
-    let path_str = String::from_utf8(path).map_err(|_| LibRawError::InvalidPath)?;
-
+fn metadata_inner<'a>(env: Env<'a>, path: String) -> Result<Term<'a>, LibRawError> {
     let handle = RawHandle::new()?;
-    handle.open(&path_str)?;
+    handle.open(&path)?;
 
     // No unpack/process needed for metadata; libraw populates idata/other/sizes
     // during open_file.
@@ -107,7 +103,7 @@ fn metadata_inner<'a>(env: Env<'a>, path: Vec<u8>) -> Result<Term<'a>, LibRawErr
     let captured_at: Term = if ts == 0 {
         atom::nil().encode(env)
     } else {
-        (ts as i64).encode(env)
+        ts.encode(env)
     };
 
     let map = map_new(env);

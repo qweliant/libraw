@@ -4,7 +4,7 @@ defmodule LibRaw.NIF do
   use Rustler, otp_app: :libraw, crate: "libraw_nif"
 
   # Called on dirty CPU scheduler — decoding RAW files takes 100-500ms.
-  @spec decode_nif(charlist(), integer(), integer(), integer(), float(), float()) ::
+  @spec decode_nif(String.t(), integer(), integer(), integer(), float(), float()) ::
           {:ok,
            %{
              pixels: binary(),
@@ -18,7 +18,7 @@ defmodule LibRaw.NIF do
     do: :erlang.nif_error(:nif_not_loaded)
 
   # Called on dirty CPU scheduler — opening+reading EXIF is cheap but can block on I/O.
-  @spec metadata_nif(charlist()) ::
+  @spec metadata_nif(String.t()) ::
           {:ok,
            %{
              camera_make: String.t(),

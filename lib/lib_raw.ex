@@ -84,7 +84,7 @@ defmodule LibRaw do
     with :ok <- validate_bps(output_bps),
          {:ok, {g0, g1}} <- resolve_gamma(gamma_opt) do
       NIF.decode_nif(
-        to_charlist(path),
+        path,
         bool_to_int(use_camera_wb),
         bool_to_int(no_auto_bright),
         output_bps,
@@ -110,7 +110,7 @@ defmodule LibRaw do
   """
   @spec metadata(Path.t()) :: {:ok, metadata()} | {:error, term()}
   def metadata(path) do
-    case NIF.metadata_nif(to_charlist(path)) do
+    case NIF.metadata_nif(path) do
       {:ok, raw} ->
         {:ok, Map.update!(raw, :captured_at, &parse_timestamp/1)}
 

@@ -1,5 +1,5 @@
 use std::ffi::{CStr, CString};
-use std::os::raw::{c_char, c_double, c_float, c_int, c_uchar, c_uint, c_ulong, c_ushort};
+use std::os::raw::{c_char, c_double, c_float, c_int, c_long, c_uchar, c_uint, c_ushort};
 
 use crate::error::{check, LibRawError};
 
@@ -42,7 +42,7 @@ extern "C" {
     // --- wrapper.c shims: metadata getters ---
     fn lrnif_get_make(lr: *mut LibRawDataT) -> *const c_char;
     fn lrnif_get_model(lr: *mut LibRawDataT) -> *const c_char;
-    fn lrnif_get_timestamp(lr: *mut LibRawDataT) -> c_ulong;
+    fn lrnif_get_timestamp(lr: *mut LibRawDataT) -> c_long;
     fn lrnif_get_iso(lr: *mut LibRawDataT) -> c_float;
     fn lrnif_get_shutter(lr: *mut LibRawDataT) -> c_float;
     fn lrnif_get_aperture(lr: *mut LibRawDataT) -> c_float;
@@ -129,8 +129,8 @@ impl RawHandle {
     }
 
     /// Unix timestamp as reported by libraw. 0 means "not present".
-    pub fn timestamp(&self) -> u64 {
-        unsafe { lrnif_get_timestamp(self.ptr) as u64 }
+    pub fn timestamp(&self) -> i64 {
+        unsafe { lrnif_get_timestamp(self.ptr) as i64 }
     }
 
     pub fn iso(&self) -> f64 {
