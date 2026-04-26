@@ -1,0 +1,13 @@
+/_build/
+/deps/
+/native/libraw_nif/target/
+*.beam
+erl_crash.dump
+
+# Editors / tooling
+.claude/
+.vscode/
+.elixir_ls/
+
+# OS
+.DS_Store
