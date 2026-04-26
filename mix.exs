@@ -36,7 +36,16 @@ defmodule LibRaw.MixProject do
     [
       licenses: ["MIT"],
       links: %{"GitHub" => @source_url},
-      files: ~w(lib native mix.exs README.md LICENSE)
+      files: ~w(
+        lib
+        native/libraw_nif/src
+        native/libraw_nif/Cargo.toml
+        native/libraw_nif/Cargo.lock
+        native/libraw_nif/build.rs
+        mix.exs
+        README.md
+        LICENSE
+      )
     ]
   end
 

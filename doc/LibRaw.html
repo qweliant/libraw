@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.1">
+    <meta name="project" content="LibRaw v0.1.0">
+
+
+    <title>LibRaw — LibRaw v0.1.0</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-YJO4MOOW.css" />
+
+    <script defer src="dist/sidebar_items-1DEA72F6.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-YU4BZFVS.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="LibRaw.html" class="sidebar-projectName" translate="no">
+LibRaw
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.1.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Pages"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of LibRaw</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">LibRaw</span> 
+      <small class="app-vsn" translate="no">(LibRaw v0.1.0)</small>
+
+    </h1>
+
+<a href="LibRaw.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+
+      <a href="https://github.com/qweliant/libraw/blob/main/lib/lib_raw.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Native camera RAW decoding for the BEAM via a Rustler NIF wrapping libraw.</p><h2 id="module-prerequisites" class="section-heading"><a href="#module-prerequisites" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Prerequisites</span></h2><p>libraw must be installed on the system:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># macOS</span><span class="w">
+</span><span class="n">brew</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">libraw</span><span class="w">
+
+</span><span class="c1"># Debian / Ubuntu</span><span class="w">
+</span><span class="n">apt</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">libraw</span><span class="o">-</span><span class="n">dev</span></code></pre><h2 id="module-examples" class="section-heading"><a href="#module-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="2486293837-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">image</span><span class="p" data-group-id="2486293837-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">LibRaw</span><span class="o">.</span><span class="n">decode</span><span class="p" data-group-id="2486293837-2">(</span><span class="s">&quot;/path/to/photo.CR3&quot;</span><span class="p" data-group-id="2486293837-2">)</span><span class="w">
+</span><span class="c1"># =&gt; %{pixels: &lt;&lt;...&gt;&gt;, width: 6000, height: 4000, colors: 3, bps: 8}</span><span class="w">
+
+</span><span class="p" data-group-id="2486293837-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p" data-group-id="2486293837-3">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">LibRaw</span><span class="o">.</span><span class="n">metadata</span><span class="p" data-group-id="2486293837-4">(</span><span class="s">&quot;/path/to/photo.CR3&quot;</span><span class="p" data-group-id="2486293837-4">)</span><span class="w">
+</span><span class="c1"># =&gt; %{camera_make: &quot;Canon&quot;, camera_model: &quot;EOS R5&quot;, iso: 400.0, ...}</span></code></pre>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-types summary">
+  <h3>
+    <a href="#types">Types</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:decode_opts/0" data-no-tooltip="" translate="no">decode_opts()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:image/0" data-no-tooltip="" translate="no">image()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:metadata/0" data-no-tooltip="" translate="no">metadata()</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h3>
+    <a href="#functions">Functions</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#decode/2" data-no-tooltip="" translate="no">decode(path, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Decode a RAW image file, returning processed pixel data.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#metadata/1" data-no-tooltip="" translate="no">metadata(path)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Read EXIF metadata from a RAW image file without running the full
+decode pipeline.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h2>
+
+    <div class="types-list">
+<section class="detail" id="t:decode_opts/0">
+
+  <div class="detail-header">
+    <a href="#t:decode_opts/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">decode_opts()</h1>
+
+
+        <a href="https://github.com/qweliant/libraw/blob/main/lib/lib_raw.ex#L26" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> decode_opts() :: [
+  use_camera_wb: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  no_auto_bright: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  output_bps: 8 | 16,
+  gamma: :srgb | :linear | {<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">number</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">number</a>()}
+]</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:image/0">
+
+  <div class="detail-header">
+    <a href="#t:image/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">image()</h1>
+
+
+        <a href="https://github.com/qweliant/libraw/blob/main/lib/lib_raw.ex#L33" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> image() :: %{
+  pixels: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(),
+  width: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  height: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  colors: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  bps: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:metadata/0">
+
+  <div class="detail-header">
+    <a href="#t:metadata/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">metadata()</h1>
+
+
+        <a href="https://github.com/qweliant/libraw/blob/main/lib/lib_raw.ex#L41" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> metadata() :: %{
+  camera_make: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  camera_model: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  captured_at: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>() | nil,
+  iso: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">float</a>(),
+  shutter: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">float</a>(),
+  aperture: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">float</a>(),
+  orientation: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>()
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="decode/2">
+
+    <span id="decode/1"></span>
+
+  <div class="detail-header">
+    <a href="#decode/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">decode(path, opts \\ [])</h1>
+
+
+        <a href="https://github.com/qweliant/libraw/blob/main/lib/lib_raw.ex#L96" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> decode(<a href="https://hexdocs.pm/elixir/Path.html#t:t/0">Path.t</a>(), <a href="#t:decode_opts/0">decode_opts</a>()) :: {:ok, <a href="#t:image/0">image</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+
+      </div>
+
+<p>Decode a RAW image file, returning processed pixel data.</p><p>Runs the full libraw pipeline: open → unpack → dcraw_process →
+in-memory bitmap. The NIF call is dispatched to a Dirty CPU scheduler
+because decoding typically takes 100–500 ms.</p><h2 id="decode/2-parameters" class="section-heading"><a href="#decode/2-parameters" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Parameters</span></h2><ul><li><code class="inline">path</code> — <code class="inline">Path.t()</code>. Filesystem path to a camera RAW file. Passed
+to libraw verbatim; non-ASCII paths work because the NIF takes a
+UTF-8 binary, not a charlist.</li><li><code class="inline">opts</code> — keyword list. See <em>Options</em> below.</li></ul><h2 id="decode/2-options" class="section-heading"><a href="#decode/2-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Options</span></h2><ul><li><code class="inline">:use_camera_wb</code> — use the white balance stored in the file
+(default: <code class="inline">true</code>).</li><li><code class="inline">:no_auto_bright</code> — disable libraw's automatic brightening
+(default: <code class="inline">false</code>).</li><li><code class="inline">:output_bps</code> — bits per sample, either <code class="inline">8</code> or <code class="inline">16</code>
+(default: <code class="inline">8</code>). Other values return <code class="inline">{:error, {:invalid_output_bps, n}}</code>
+without touching the NIF.</li><li><code class="inline">:gamma</code> — gamma curve: <code class="inline">:srgb</code>, <code class="inline">:linear</code>, or a <code class="inline">{g0, g1}</code> tuple
+of numbers (default: <code class="inline">:srgb</code>). Anything else returns
+<code class="inline">{:error, {:invalid_gamma, term}}</code>.</li></ul><h2 id="decode/2-returns" class="section-heading"><a href="#decode/2-returns" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Returns</span></h2><ul><li><code class="inline">{:ok, image}</code> — <code class="inline">image</code> is a map with the keys:<ul><li><code class="inline">:pixels</code> — raw pixel bytes as a binary, row-major, interleaved
+per channel.</li><li><code class="inline">:width</code> / <code class="inline">:height</code> — pixel dimensions.</li><li><code class="inline">:colors</code> — channel count (typically <code class="inline">3</code> for RGB).</li><li><code class="inline">:bps</code> — bits per sample, matches <code class="inline">:output_bps</code>.</li></ul></li><li><code class="inline">{:error, reason}</code> — option-validation failures (see <em>Options</em>),
+a libraw error string for unsupported / corrupted files, or
+<code class="inline">&quot;invalid path: contains null byte&quot;</code> for paths containing <code class="inline">\0</code>.</li></ul>
+  </section>
+</section>
+<section class="detail" id="metadata/1">
+
+  <div class="detail-header">
+    <a href="#metadata/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">metadata(path)</h1>
+
+
+        <a href="https://github.com/qweliant/libraw/blob/main/lib/lib_raw.ex#L143" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> metadata(<a href="https://hexdocs.pm/elixir/Path.html#t:t/0">Path.t</a>()) :: {:ok, <a href="#t:metadata/0">metadata</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+
+      </div>
+
+<p>Read EXIF metadata from a RAW image file without running the full
+decode pipeline.</p><p>Only <code class="inline">libraw_open_file</code> is called, so this is dramatically cheaper
+than <a href="#decode/2"><code class="inline">decode/2</code></a> — typically single-digit milliseconds. Still
+scheduled on a Dirty CPU scheduler because the open touches disk.</p><h2 id="metadata/1-parameters" class="section-heading"><a href="#metadata/1-parameters" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Parameters</span></h2><ul><li><code class="inline">path</code> — <code class="inline">Path.t()</code>. Filesystem path to a camera RAW file.</li></ul><h2 id="metadata/1-returns" class="section-heading"><a href="#metadata/1-returns" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Returns</span></h2><ul><li><code class="inline">{:ok, metadata}</code> — <code class="inline">metadata</code> is a map with the keys:<ul><li><code class="inline">:camera_make</code> — manufacturer name (e.g. <code class="inline">&quot;Canon&quot;</code>).</li><li><code class="inline">:camera_model</code> — model name (e.g. <code class="inline">&quot;EOS R5&quot;</code>).</li><li><code class="inline">:captured_at</code> — <a href="https://hexdocs.pm/elixir/DateTime.html"><code class="inline">DateTime</code></a> in UTC, or <code class="inline">nil</code> if libraw
+reports no shooting timestamp (returns <code class="inline">0</code> from libraw).</li><li><code class="inline">:iso</code> — ISO speed as a float.</li><li><code class="inline">:shutter</code> — shutter speed in seconds as a float (e.g. <code class="inline">0.004</code>
+for 1/250s).</li><li><code class="inline">:aperture</code> — f-number as a float.</li><li><code class="inline">:orientation</code> — EXIF orientation / flip code as an integer.</li></ul></li><li><code class="inline">{:error, reason}</code> — a libraw error string for unsupported /
+corrupted files, or <code class="inline">&quot;invalid path: contains null byte&quot;</code>.</li></ul>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+            <span class="line">
+              <a href="https://hex.pm/packages/libraw/0.1.0">Hex Package</a>
+
+              <a href="https://preview.hex.pm/preview/libraw/0.1.0">Hex Preview</a>
+
+            </span>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="LibRaw.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

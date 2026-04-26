@@ -1,0 +1,12 @@
+# LibRaw v0.1.0 - Table of Contents
+
+Rustler NIF wrapping libraw for native camera RAW decoding in the BEAM
+
+## Pages
+
+- [LibRaw](readme.md)
+
+## Modules
+
+- [LibRaw](LibRaw.md): Native camera RAW decoding for the BEAM via a Rustler NIF wrapping libraw.
+
