@@ -4,6 +4,9 @@
 *.beam
 erl_crash.dump
 
+# Test fixtures (RAW files are large; provide locally)
+/test/fixtures/
+
 # Editors / tooling
 .claude/
 .vscode/

@@ -181,11 +181,12 @@ impl ProcessedImage {
         unsafe { lrnif_image_bits(self.ptr) as u32 }
     }
 
-    /// Copy the pixel data into an owned `Vec<u8>`.
-    pub fn pixel_bytes(&self) -> Vec<u8> {
+    /// Borrow the pixel data owned by libraw. Valid until the `ProcessedImage`
+    /// is dropped (which calls `libraw_dcraw_clear_mem`).
+    pub fn as_slice(&self) -> &[u8] {
         let size = unsafe { lrnif_image_data_size(self.ptr) } as usize;
         let data_ptr = unsafe { lrnif_image_data(self.ptr) };
-        unsafe { std::slice::from_raw_parts(data_ptr, size).to_vec() }
+        unsafe { std::slice::from_raw_parts(data_ptr, size) }
     }
 }
 

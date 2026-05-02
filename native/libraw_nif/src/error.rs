@@ -1,4 +1,4 @@
-use rustler::{Encoder, Env, NifResult, Term};
+use rustler::{Encoder, Env, Term};
 
 /// Maps a libraw integer error code to a human-readable atom/string pair
 /// returned to Elixir as `{:error, reason}`.
@@ -10,8 +10,6 @@ pub enum LibRawError {
     InvalidPath,
     /// libraw returned a null pointer where one was not expected
     NullPointer,
-    /// The processed image has an unexpected type (not LIBRAW_IMAGE_BITMAP)
-    UnexpectedImageType,
 }
 
 impl LibRawError {
@@ -26,9 +24,6 @@ impl std::fmt::Display for LibRawError {
             LibRawError::LibRaw(code) => write!(f, "libraw error code {}", code),
             LibRawError::InvalidPath => write!(f, "invalid path: contains null byte"),
             LibRawError::NullPointer => write!(f, "libraw returned a null pointer"),
-            LibRawError::UnexpectedImageType => {
-                write!(f, "libraw returned an unexpected image type (not bitmap)")
-            }
         }
     }
 }
@@ -48,17 +43,3 @@ pub fn encode_error<'a>(env: Env<'a>, err: LibRawError) -> Term<'a> {
     (rustler::types::atom::error(), reason).encode(env)
 }
 
-/// Convenience: encode a `Result<Term, LibRawError>` into an Elixir term.
-pub fn result_to_term<'a>(env: Env<'a>, result: Result<Term<'a>, LibRawError>) -> Term<'a> {
-    match result {
-        Ok(t) => t,
-        Err(e) => encode_error(env, e),
-    }
-}
-
-/// Allow `?` to propagate `LibRawError` inside functions that return `NifResult`.
-impl From<LibRawError> for rustler::Error {
-    fn from(e: LibRawError) -> rustler::Error {
-        rustler::Error::Term(Box::new(e.to_string()))
-    }
-}

@@ -48,8 +48,8 @@ defmodule LibRaw do
           orientation: integer()
         }
 
-  # sRGB gamma curve parameters used by dcraw
-  @gamma_srgb {2.222, 12.92}
+  # sRGB gamma curve parameters used by dcraw (-g 2.4 12.92)
+  @gamma_srgb {2.4, 12.92}
   # Linear (no gamma correction)
   @gamma_linear {1.0, 1.0}
 
@@ -157,7 +157,9 @@ defmodule LibRaw do
 
   defp resolve_gamma(:srgb), do: {:ok, @gamma_srgb}
   defp resolve_gamma(:linear), do: {:ok, @gamma_linear}
-  defp resolve_gamma({g0, g1}) when is_number(g0) and is_number(g1), do: {:ok, {g0 * 1.0, g1 * 1.0}}
+
+  defp resolve_gamma({g0, g1}) when is_number(g0) and is_number(g1),
+    do: {:ok, {g0 * 1.0, g1 * 1.0}}
 
   defp resolve_gamma(other), do: {:error, {:invalid_gamma, other}}
 
@@ -167,8 +169,10 @@ defmodule LibRaw do
   # The NIF returns the Unix timestamp as an integer (seconds since epoch).
   # 0 means "not set" in libraw.
   defp parse_timestamp(0), do: nil
+
   defp parse_timestamp(unix) when is_integer(unix) do
     DateTime.from_unix!(unix, :second)
   end
+
   defp parse_timestamp(nil), do: nil
 end

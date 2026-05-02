@@ -65,10 +65,10 @@ fn decode_inner<'a>(
 
     let img = handle.make_mem_image()?;
 
-    let pixel_bytes = img.pixel_bytes();
-    let mut bin = OwnedBinary::new(pixel_bytes.len())
+    let pixels = img.as_slice();
+    let mut bin = OwnedBinary::new(pixels.len())
         .ok_or(LibRawError::NullPointer)?;
-    bin.as_mut_slice().copy_from_slice(&pixel_bytes);
+    bin.as_mut_slice().copy_from_slice(pixels);
 
     let map = map_new(env);
     let map = map.map_put(atoms::pixels().encode(env), bin.release(env).encode(env)).unwrap();
@@ -118,4 +118,4 @@ fn metadata_inner<'a>(env: Env<'a>, path: String) -> Result<Term<'a>, LibRawErro
     Ok(map)
 }
 
-rustler::init!("Elixir.LibRaw.NIF", [decode_nif, metadata_nif]);
+rustler::init!("Elixir.LibRaw.NIF");

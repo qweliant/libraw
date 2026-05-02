@@ -124,6 +124,17 @@ Both NIFs (`decode_nif` and `metadata_nif`) are annotated with
 which is far beyond the 1 ms NIF time budget for normal schedulers.  Running
 on dirty schedulers prevents blocking the BEAM scheduler threads.
 
+## Development
+
+```bash
+mix deps.get
+mix test           # unit tests (no RAW file required)
+mix test.smoke     # end-to-end decode test; requires test/fixtures/sample.raw
+```
+
+To run the smoke test, drop any RAW file (CR2, CR3, NEF, ARW, DNG, RAF,
+etc.) at `test/fixtures/sample.raw`. The path is gitignored.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
