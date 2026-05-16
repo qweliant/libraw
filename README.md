@@ -6,7 +6,8 @@ An Elixir library for native camera RAW decoding on the BEAM, powered by a
 
 ## Prerequisites
 
-libraw must be installed before compiling or running `:libraw`:
+**libraw must be installed** on every machine that runs `:libraw` — including
+machines that use the precompiled NIF:
 
 ```bash
 # macOS
@@ -21,6 +22,11 @@ apt install libraw-dev
 > library. See the [libraw license](https://www.libraw.org/license) for
 > details.
 
+A **Rust toolchain is not required** for the targets listed under *Supported
+Platforms* below. For unsupported targets the package falls back to compiling
+the NIF from source, which requires Rust and the libraw headers above. You can
+also opt into a source build explicitly with `LIBRAW_BUILD=1`.
+
 ## Installation
 
 Add `:libraw` to your `mix.exs` dependencies:
@@ -28,10 +34,26 @@ Add `:libraw` to your `mix.exs` dependencies:
 ```elixir
 def deps do
   [
-    {:libraw, "~> 0.1"}
+    {:libraw, "~> 0.3"}
   ]
 end
 ```
+
+### Supported Platforms
+
+Precompiled NIF binaries are downloaded automatically for:
+
+| Target | Platform |
+|--------|----------|
+| `aarch64-apple-darwin` | macOS (Apple Silicon) |
+| `x86_64-apple-darwin` | macOS (Intel) |
+| `x86_64-unknown-linux-gnu` | Linux x86\_64 (Debian, Ubuntu, …) |
+| `aarch64-unknown-linux-gnu` | Linux ARM64 |
+
+MUSL / Alpine Linux is not supported — libraw is not reliable on musl libc.
+
+**Forcing a source build:** set `LIBRAW_BUILD=1` before `mix deps.compile`.
+You will also need [Rust installed](https://rustup.rs) and `libraw-dev` headers.
 
 ## Usage
 
@@ -97,7 +119,7 @@ end
 lib/
   lib_raw.ex          Public API: decode/2, metadata/1, gamma resolution, timestamp parsing
   lib_raw/
-    nif.ex            use Rustler + NIF stubs (nif_not_loaded fallbacks)
+    nif.ex            use RustlerPrecompiled + NIF stubs (nif_not_loaded fallbacks)
 native/
   libraw_nif/
     Cargo.toml        deps: rustler = "0.33"; build-deps: cc = "1", pkg-config = "0.3"

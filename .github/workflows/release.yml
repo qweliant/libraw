@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build_release:
+    name: NIF ${{ matrix.nif }} - ${{ matrix.job.target }}
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        nif: ["2.15", "2.16", "2.17"]
+        job:
+          - { target: aarch64-apple-darwin,     os: macos-latest   }
+          - { target: x86_64-apple-darwin,       os: macos-13       }
+          - { target: x86_64-unknown-linux-gnu,  os: ubuntu-22.04   }
+          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install libraw (macOS)
+        if: runner.os == 'macOS'
+        run: brew install libraw
+
+      - name: Install libraw (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y libraw-dev
+
+      - name: Build precompiled NIF
+        id: build
+        uses: philss/rustler-precompiled-action@v1
+        with:
+          project-name: libraw_nif
+          project-version: ${{ github.ref_name }}
+          target: ${{ matrix.job.target }}
+          nif-version: ${{ matrix.nif }}
+          project-dir: "native/libraw_nif"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build.outputs.file-name }}
+          path: ${{ steps.build.outputs.file-path }}
+
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs: build_release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          generate_release_notes: true
+          files: artifacts/**

@@ -1,7 +1,21 @@
 defmodule LibRaw.NIF do
   @moduledoc false
 
-  use Rustler, otp_app: :libraw, crate: "libraw_nif"
+  version = Mix.Project.config()[:version]
+
+  use RustlerPrecompiled,
+    otp_app: :libraw,
+    crate: "libraw_nif",
+    version: version,
+    base_url: "https://github.com/qweliant/libraw/releases/download/v#{version}",
+    nif_versions: ["2.15", "2.16", "2.17"],
+    targets: ~w(
+      aarch64-apple-darwin
+      x86_64-apple-darwin
+      x86_64-unknown-linux-gnu
+      aarch64-unknown-linux-gnu
+    ),
+    force_build: System.get_env("LIBRAW_BUILD") in ["1", "true"]
 
   # Called on dirty CPU scheduler — decoding RAW files takes 100-500ms.
   @spec decode_nif(String.t(), integer(), integer(), integer(), float(), float()) ::
