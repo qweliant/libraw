@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-16
+
+### Added
+
+- Precompiled NIF binaries via `rustler_precompiled`. Supported targets:
+  `aarch64-apple-darwin`, `x86_64-apple-darwin`, `x86_64-unknown-linux-gnu`,
+  `aarch64-unknown-linux-gnu`. Users on these platforms no longer need a Rust
+  toolchain installed.
+- `.github/workflows/release.yml`: GitHub Actions workflow that builds and
+  uploads NIF artifacts on every `v*` tag push. Runs on native macOS and Linux
+  ARM/x86 runners; `brew install libraw` / `apt install libraw-dev` installs
+  the required shared library into the build environment.
+- `LIBRAW_BUILD=1` env-var opt-in for forcing a local source build (useful for
+  development or unsupported targets).
+
+### Changed
+
+- `lib/lib_raw/nif.ex` now uses `RustlerPrecompiled` instead of plain `Rustler`.
+  The libraw system library is still required at runtime on every platform
+  (dynamic linking, LGPL).
+- Installation docs updated: version constraint bumped to `~> 0.3`, new
+  "Supported Platforms" table, Rust prerequisite scoped to source-build cases.
+
+### Notes
+
+- MUSL / Alpine Linux is intentionally excluded: libraw is not reliable on
+  musl libc.
+
 ## [0.2.0] - 2026-05-02
 
 ### Fixed
@@ -49,5 +77,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Thin `wrapper.c` shim avoids bindgen / struct-offset breakage across
   libraw 0.20 / 0.21 / 0.22.
 
+[0.3.0]: https://github.com/qweliant/libraw/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/qweliant/libraw/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/qweliant/libraw/releases/tag/v0.1.0
