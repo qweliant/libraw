@@ -1,4 +1,5 @@
 LibRaw.md
 api-reference.md
+changelog.md
 llms.txt
 readme.md
