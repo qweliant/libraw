@@ -4,9 +4,6 @@ on:
   push:
     tags:
       - "v*"
-    # TEMP: validate the build matrix from the PR branch (remove before merge).
-    branches:
-      - "wire-up-rustler-precompiled"
   workflow_dispatch:
     inputs:
       tag_name:
