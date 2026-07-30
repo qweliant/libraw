@@ -10,6 +10,14 @@ crate-type = ["cdylib"]
 [dependencies]
 rustler = "0.37"
 
+# rustler-precompiled-action selects the target NIF version by activating
+# one of these features; each must forward to the matching rustler feature.
+[features]
+default = ["nif_version_2_15"]
+nif_version_2_15 = ["rustler/nif_version_2_15"]
+nif_version_2_16 = ["rustler/nif_version_2_16"]
+nif_version_2_17 = ["rustler/nif_version_2_17"]
+
 [build-dependencies]
 cc = "1"
 pkg-config = "0.3"

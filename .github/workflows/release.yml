@@ -22,6 +22,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # rustler-precompiled-action prepends "v" itself, and RustlerPrecompiled
+      # downloads by the mix.exs version — so pass the bare version, never the
+      # tag name (which would break on rc tags like v0.3.0-rc1).
+      - name: Extract project version
+        shell: bash
+        run: |
+          echo "PROJECT_VERSION=$(sed -n 's/^  @version "\(.*\)"/\1/p' mix.exs | head -n1)" >> $GITHUB_ENV
+
       - name: Install libraw (macOS)
         if: runner.os == 'macOS'
         run: brew install libraw
@@ -37,7 +45,7 @@ jobs:
         uses: philss/rustler-precompiled-action@v1
         with:
           project-name: libraw_nif
-          project-version: ${{ github.ref_name }}
+          project-version: ${{ env.PROJECT_VERSION }}
           target: ${{ matrix.job.target }}
           nif-version: ${{ matrix.nif }}
           project-dir: "native/libraw_nif"
@@ -62,6 +70,13 @@ jobs:
         with:
           path: artifacts
           merge-multiple: true
+
+      - name: Generate sha256 checksum files
+        run: |
+          cd artifacts
+          for f in *.tar.gz; do
+            sha256sum "$f" > "$f.sha256"
+          done
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1

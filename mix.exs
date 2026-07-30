@@ -49,6 +49,7 @@ defmodule LibRaw.MixProject do
       links: %{"GitHub" => @source_url},
       files: ~w(
         lib
+        checksum-*.exs
         native/libraw_nif/src
         native/libraw_nif/Cargo.toml
         native/libraw_nif/Cargo.lock
