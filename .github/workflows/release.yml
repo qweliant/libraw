@@ -51,7 +51,7 @@ jobs:
 
       - name: Build precompiled NIF
         id: build
-        uses: philss/rustler-precompiled-action@v1
+        uses: philss/rustler-precompiled-action@v1.1.5
         with:
           project-name: libraw_nif
           project-version: ${{ env.PROJECT_VERSION }}
