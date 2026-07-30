@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag to create the release under (e.g. v0.3.0-rc1)"
+        required: true
+        type: string
 
 jobs:
   build_release:
@@ -81,6 +87,10 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
+          # On tag pushes github.ref_name is the tag; on workflow_dispatch the
+          # release (and tag, if missing) is created from the input at this SHA.
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
+          target_commitish: ${{ github.sha }}
           draft: false
           generate_release_notes: true
           files: artifacts/**
