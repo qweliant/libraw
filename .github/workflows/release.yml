@@ -58,6 +58,11 @@ jobs:
           target: ${{ matrix.job.target }}
           nif-version: ${{ matrix.nif }}
           project-dir: "native/libraw_nif"
+          # All four targets build on native runners. Must be the empty string,
+          # not false: the action's `if: inputs.use-cross` sees the string
+          # "false", which is truthy, and its cross-install helper breaks on
+          # macOS (BSD tar lacks --wildcards). Empty is falsy and skips it.
+          use-cross: ""
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
