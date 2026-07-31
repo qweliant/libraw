@@ -3,6 +3,14 @@ defmodule LibRaw.NIF do
 
   version = Mix.Project.config()[:version]
 
+  # RustlerPrecompiled only consults `config :rustler_precompiled, :force_build,
+  # libraw: true` via `Keyword.put_new/3`, so passing `:force_build` here would
+  # otherwise shadow it and silently ignore the documented escape hatch — the
+  # very one its own download-failure message tells users to reach for.
+  force_build? =
+    System.get_env("LIBRAW_BUILD") in ["1", "true"] or
+      Application.compile_env(:rustler_precompiled, [:force_build, :libraw], false)
+
   use RustlerPrecompiled,
     otp_app: :libraw,
     crate: "libraw_nif",
@@ -15,7 +23,7 @@ defmodule LibRaw.NIF do
       x86_64-unknown-linux-gnu
       aarch64-unknown-linux-gnu
     ),
-    force_build: System.get_env("LIBRAW_BUILD") in ["1", "true"]
+    force_build: force_build?
 
   # Called on dirty CPU scheduler — decoding RAW files takes 100-500ms.
   @spec decode_nif(String.t(), integer(), integer(), integer(), float(), float()) ::
