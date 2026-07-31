@@ -1,14 +1,18 @@
 defmodule LibRaw.MixProject do
   use Mix.Project
 
-  @version "0.3.0"
+  @version "0.3.0-rc1"
   @source_url "https://github.com/qweliant/libraw"
 
   def project do
     [
       app: :libraw,
       version: @version,
-      elixir: "~> 1.14",
+      # 1.15 is a hard floor, not a preference: both rustler and
+      # rustler_precompiled declare `elixir: "~> 1.15"` themselves, so Mix
+      # refuses to compile them on 1.14 — the precompiled path is affected
+      # too, not just source builds.
+      elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
@@ -31,7 +35,10 @@ defmodule LibRaw.MixProject do
 
   defp deps do
     [
-      {:rustler, "~> 0.37", runtime: false},
+      # Optional: only needed for source builds (LIBRAW_BUILD=1 or an
+      # unsupported target). Keeping it optional means consumers on a
+      # precompiled target don't pull rustler + jason into their dep tree.
+      {:rustler, "~> 0.37", runtime: false, optional: true},
       {:rustler_precompiled, "~> 0.8"},
       {:ex_doc, "~> 0.31", only: :dev, runtime: false}
     ]

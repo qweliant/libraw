@@ -22,10 +22,32 @@ apt install libraw-dev
 > library. See the [libraw license](https://www.libraw.org/license) for
 > details.
 
+Elixir **1.15 or later** is required (`rustler_precompiled` itself declares
+`~> 1.15`).
+
 A **Rust toolchain is not required** for the targets listed under *Supported
 Platforms* below. For unsupported targets the package falls back to compiling
 the NIF from source, which requires Rust and the libraw headers above. You can
 also opt into a source build explicitly with `LIBRAW_BUILD=1`.
+
+### libraw version matters
+
+The precompiled NIFs are dynamically linked against a **specific libraw
+ABI**, baked in when the release is built:
+
+| Platform | Required libraw | Shipped by |
+|----------|-----------------|------------|
+| Linux x86\_64 / ARM64 | `libraw.so.23` (libraw 0.21.x) | Ubuntu 24.04+, Debian 13+ |
+| macOS (both arches) | `libraw.25.dylib` (libraw 0.22.x) | current Homebrew `libraw` |
+
+If your system provides a different major version — Ubuntu 22.04 and Debian 12
+ship `libraw.so.20` — the precompiled NIF will fail to load with an error like
+`libraw.so.23: cannot open shared object file`. Install a newer libraw, or
+build from source with `LIBRAW_BUILD=1` to link against whatever you have.
+
+On macOS the NIF references Homebrew's default prefix (`/opt/homebrew` on
+Apple Silicon, `/usr/local` on Intel) by absolute path. Non-default Homebrew
+prefixes, MacPorts, and Nix installs need a source build.
 
 ## Installation
 
@@ -39,6 +61,11 @@ def deps do
 end
 ```
 
+> **Testing the 0.3.0 release candidate?** Pin it exactly:
+> `{:libraw, "0.3.0-rc1"}`. Hex's resolver excludes prereleases from ordinary
+> requirements, so `~> 0.3` will not select it — and until `0.3.0` final is
+> published, `~> 0.3` resolves to nothing at all.
+
 ### Supported Platforms
 
 Precompiled NIF binaries are downloaded automatically for:
@@ -47,13 +74,35 @@ Precompiled NIF binaries are downloaded automatically for:
 |--------|----------|
 | `aarch64-apple-darwin` | macOS (Apple Silicon) |
 | `x86_64-apple-darwin` | macOS (Intel) |
-| `x86_64-unknown-linux-gnu` | Linux x86\_64 (Debian, Ubuntu, …) |
-| `aarch64-unknown-linux-gnu` | Linux ARM64 |
+| `x86_64-unknown-linux-gnu` | Linux x86\_64 (glibc, libraw 0.21.x) |
+| `aarch64-unknown-linux-gnu` | Linux ARM64 (glibc, libraw 0.21.x) |
 
 MUSL / Alpine Linux is not supported — libraw is not reliable on musl libc.
 
 **Forcing a source build:** set `LIBRAW_BUILD=1` before `mix deps.compile`.
 You will also need [Rust installed](https://rustup.rs) and `libraw-dev` headers.
+
+`:rustler` is an *optional* dependency of `:libraw`, so it is not installed on
+the precompiled path. A source build needs it in **your** dependency list:
+
+```elixir
+def deps do
+  [
+    {:libraw, "~> 0.3"},
+    {:rustler, "~> 0.37", runtime: false}
+  ]
+end
+```
+
+Without it the build fails with `Rustler dependency is needed to force the
+build`.
+
+The same thing can be done from config, which is useful when the env var is
+awkward to thread through a release build:
+
+```elixir
+config :rustler_precompiled, :force_build, libraw: true
+```
 
 ## Usage
 
@@ -122,7 +171,7 @@ lib/
     nif.ex            use RustlerPrecompiled + NIF stubs (nif_not_loaded fallbacks)
 native/
   libraw_nif/
-    Cargo.toml        deps: rustler = "0.33"; build-deps: cc = "1", pkg-config = "0.3"
+    Cargo.toml        deps: rustler = "0.37"; build-deps: cc = "1", pkg-config = "0.3"
     build.rs          pkg_config::probe("libraw") for dynamic linking; cc::Build compiles wrapper.c
     src/
       lib.rs          rustler::init! and two #[rustler::nif(schedule = "DirtyCpu")] functions
@@ -154,9 +203,21 @@ mix test           # unit tests (no RAW file required)
 mix test.smoke     # end-to-end decode test; requires test/fixtures/sample.raw
 ```
 
+Working on this repo **always builds the NIF from source**, so a Rust
+toolchain and the libraw headers are required — `config/config.exs` sets
+`force_build` for the `:dev` and `:test` environments. This is deliberate: a
+checkout is normally ahead of the last published release, so downloading a
+precompiled NIF would either 404 or hand you a stale binary that ignores your
+Rust changes. That config is never seen by applications that depend on
+`:libraw`.
+
 To run the smoke test, drop any RAW file (CR2, CR3, NEF, ARW, DNG, RAF,
 etc.) at `test/fixtures/sample.raw`. The path is gitignored.
 
+Cutting a release is documented in [RELEASING.md](https://github.com/qweliant/libraw/blob/main/RELEASING.md) — the git tag
+and the `mix.exs` version are tightly coupled and a mismatch 404s every
+consumer.
+
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](https://github.com/qweliant/libraw/blob/main/LICENSE).
