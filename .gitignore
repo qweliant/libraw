@@ -5,6 +5,13 @@
 # before `mix hex.publish`; shipped in the Hex package, not tracked in git.
 /checksum-*.exs
 /native/libraw_nif/target/
+
+# Build output: where both the source build and the precompiled download put
+# the NIF. A 461K arm64 .so was tracked here until v0.3.0; it is a build
+# artifact, is overwritten on every compile, and is not shipped in the Hex
+# package (`priv` is absent from the mix.exs `files` list).
+/priv/native/
+
 *.beam
 erl_crash.dump
 
