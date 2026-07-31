@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MIX_ENV: test
+
+jobs:
+  test:
+    name: Elixir ${{ matrix.elixir }} / OTP ${{ matrix.otp }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # The floor declared in mix.exs. Both rustler and
+          # rustler_precompiled require ~> 1.15, so 1.14 cannot work.
+          - { elixir: "1.15", otp: "26" }
+          - { elixir: "1.18", otp: "27" }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ubuntu-24.04 provides libraw 0.21 (libraw.so.23) — the same ABI the
+      # release workflow links against. Keep these two in sync.
+      - name: Install libraw
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y libraw-dev
+
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Cache deps and build
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-${{ matrix.otp }}-${{ matrix.elixir }}-
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            native/libraw_nif/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('native/libraw_nif/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - run: mix deps.get
+
+      # config/config.exs forces a source build in :dev and :test, so this
+      # compiles the Rust crate on every run rather than downloading a NIF.
+      # That is the point: it catches crate breakage before a release tag does.
+      - run: mix compile --warnings-as-errors
+
+      - run: mix test
+
+  format:
+    name: mix format
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.18"
+          otp-version: "27"
+      - run: mix format --check-formatted
+
+  macos:
+    name: macOS build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # macOS has caught breakage the Linux jobs missed before (the release
+      # pipeline's cross-install step failed only here, on BSD tar).
+      - name: Install libraw and Elixir
+        run: brew install libraw elixir
+
+      - run: mix local.hex --force && mix local.rebar --force
+      - run: mix deps.get
+      - run: mix compile
+      - run: mix test
