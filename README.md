@@ -61,11 +61,6 @@ def deps do
 end
 ```
 
-> **Testing the 0.3.0 release candidate?** Pin it exactly:
-> `{:libraw, "0.3.0-rc1"}`. Hex's resolver excludes prereleases from ordinary
-> requirements, so `~> 0.3` will not select it — and until `0.3.0` final is
-> published, `~> 0.3` resolves to nothing at all.
-
 ### Supported Platforms
 
 Precompiled NIF binaries are downloaded automatically for:

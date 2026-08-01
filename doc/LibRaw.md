@@ -5,13 +5,25 @@ Native camera RAW decoding for the BEAM via a Rustler NIF wrapping libraw.
 
 ## Prerequisites
 
-libraw must be installed on the system:
+libraw must be installed on every machine that runs this library, including
+machines using the precompiled NIF — it is linked dynamically at runtime:
 
     # macOS
     brew install libraw
 
     # Debian / Ubuntu
     apt install libraw-dev
+
+A Rust toolchain is **not** required on supported targets (macOS and Linux
+on x86_64 and ARM64), where a precompiled NIF is downloaded instead.
+
+The precompiled NIFs link a specific libraw ABI — `libraw.so.23` on Linux
+(libraw 0.21.x, Ubuntu 24.04+) and `libraw.25.dylib` on macOS (libraw
+0.22.x, current Homebrew). If your system provides a different major
+version, set `LIBRAW_BUILD=1` to build from source against whatever you
+have. See the [README](readme.html) for the full platform table.
+
+Requires Elixir 1.15 or later.
 
 ## Examples
 
