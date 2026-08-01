@@ -73,6 +73,9 @@ defmodule LibRaw.MixProject do
     [
       main: "LibRaw",
       source_url: @source_url,
+      # Without this, ex_doc links source at `main`, so the published docs for
+      # a release drift as main moves on. Pin them to the release tag.
+      source_ref: "v#{@version}",
       extras: ["README.md", "CHANGELOG.md"]
     ]
   end

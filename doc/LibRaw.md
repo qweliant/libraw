@@ -1,5 +1,5 @@
 # `LibRaw`
-[🔗](https://github.com/qweliant/libraw/blob/main/lib/lib_raw.ex#L1)
+[🔗](https://github.com/qweliant/libraw/blob/v0.3.0/lib/lib_raw.ex#L1)
 
 Native camera RAW decoding for the BEAM via a Rustler NIF wrapping libraw.
 

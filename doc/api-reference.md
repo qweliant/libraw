@@ -1,4 +1,4 @@
-# LibRaw v0.3.0-rc1 - API Reference
+# LibRaw v0.3.0 - API Reference
 
 ## Modules
 
