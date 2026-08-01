@@ -1,0 +1,50 @@
+version: 2
+
+# Three ecosystems live in this repo: Hex (mix.exs), Cargo (the NIF crate),
+# and the Actions used by CI and the release pipeline.
+#
+# ⚠️ `rustler` appears in TWO of them and the versions are paired:
+#
+#     mix.exs                  {:rustler, "~> 0.37", ...}
+#     native/libraw_nif/Cargo.toml   rustler = "0.37"
+#
+# Dependabot cannot group updates across ecosystems, so a rustler bump
+# arrives as two independent PRs. Merging one without the other breaks
+# source builds (`LIBRAW_BUILD=1`) — and CI *will* catch it, because
+# config/config.exs forces a source build in :test. Treat the pair as a
+# single change.
+
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    # Runner labels are not dependencies, but they are the other half of
+    # this pipeline's supply chain: the libraw ABI baked into every release
+    # artifact comes from whatever the runner's package manager installs.
+    # Dependabot will not tell you when ubuntu-24.04 is retired — see
+    # RELEASING.md step 4.
+    groups:
+      actions:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  - package-ecosystem: mix
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      dev-tooling:
+        patterns: ["ex_doc"]
+        update-types: [minor, patch]
+
+  - package-ecosystem: cargo
+    directory: "/native/libraw_nif"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      build-deps:
+        patterns: ["cc", "pkg-config"]
+        update-types: [minor, patch]
