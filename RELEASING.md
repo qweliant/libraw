@@ -113,10 +113,23 @@ Linux targets must agree or half the Linux userbase gets a NIF that cannot
 `libraw.so.23`).
 
 ```bash
-tar xzf liblibraw_nif-*-x86_64-unknown-linux-gnu.so.tar.gz
-readelf -d *.so | grep NEEDED          # expect libraw.so.23 on both Linux targets
-otool -L *.so | grep libraw            # macOS equivalent
+mkdir -p /tmp/abi && cd /tmp/abi
+gh release download v0.3.0-rc1 --pattern '*nif-2.17-*.so.tar.gz'
+for f in *.so.tar.gz; do tar xzf "$f"; done
+
+# objdump reads both ELF and Mach-O and ships with Xcode CLT, so this works
+# on macOS as well — `readelf` does not exist there.
+for f in *.so; do
+  printf '%-58s ' "$f"
+  { objdump -p "$f" 2>/dev/null | awk '/NEEDED/ && /libraw/ {print $2}'
+    otool -L "$f" 2>/dev/null | grep -o '[^[:space:]]*libraw\.[0-9]*\.dylib'
+  } | paste -sd' ' -
+done
 ```
+
+Both Linux lines must print the **same** soname (`libraw.so.23`). The macOS
+lines print an absolute Homebrew path and differ by prefix only —
+`/opt/homebrew/...` on arm64, `/usr/local/...` on Intel — which is expected.
 
 The README's *libraw version matters* table states the required versions to
 users — update it if these change.
