@@ -56,6 +56,18 @@ tag name to the action — on an RC tag you would get a doubled `v` or a
 
 ## Release checklist
 
+Every command below reads the version from one shell variable. Set it once, to
+exactly the `@version` you are releasing, and the rest of the checklist cannot
+drift from `mix.exs`:
+
+```bash
+VERSION=$(sed -n 's/^  @version "\(.*\)"/\1/p' mix.exs | head -n1)
+echo "$VERSION"     # sanity-check before continuing
+```
+
+Deriving it rather than typing it is the point — a hand-typed version is the
+one failure this whole document exists to prevent.
+
 ### 1. Bump the version
 
 Edit `@version` in `mix.exs`. This single value drives the tag, the
@@ -69,9 +81,12 @@ Update `CHANGELOG.md` in the same commit.
 
 ### 2. Tag and push
 
+Re-read `VERSION` after the bump commit, then tag:
+
 ```bash
-git tag v0.3.0-rc1     # must match @version exactly, with a leading v
-git push origin v0.3.0-rc1
+VERSION=$(sed -n 's/^  @version "\(.*\)"/\1/p' mix.exs | head -n1)
+git tag "v$VERSION"
+git push origin "v$VERSION"
 ```
 
 Or trigger the workflow manually (`Actions → Release → Run workflow`) and pass
@@ -98,12 +113,13 @@ a partial release, which means 404s for whichever platform is missing.
 The GitHub Release must carry **24 files**: 12 `.tar.gz` plus 12 `.sha256`.
 
 ```bash
-gh release view v0.3.0-rc1 --json assets --jq '.assets[].name' | sort
-```
+gh release view "v$VERSION" --json assets --jq '.assets[].name' | sort
+gh release view "v$VERSION" --json assets --jq '.assets[].name' | wc -l    # 24
 
-Count them (`| wc -l` should print 24). Spot-check that the names contain the
-exact version string, e.g.
-`liblibraw_nif-v0.3.0-rc1-nif-2.17-aarch64-apple-darwin.so.tar.gz`.
+# every asset must carry this exact version, and no other
+gh release view "v$VERSION" --json assets --jq '.assets[].name' \
+  | grep -vc -- "-v$VERSION-nif-"                                          # 0
+```
 
 **If you changed a runner label since the last release, check the libraw ABI.**
 Each artifact hard-links whatever libraw soname its runner provided, and both
@@ -114,7 +130,9 @@ Linux targets must agree or half the Linux userbase gets a NIF that cannot
 
 ```bash
 mkdir -p /tmp/abi && cd /tmp/abi
-gh release download v0.3.0-rc1 --pattern '*nif-2.17-*.so.tar.gz'
+# -R is required: outside a checkout `gh` has no remote to infer and fails
+# with "no git remotes found".
+gh release download "v$VERSION" -R qweliant/libraw --pattern '*nif-2.17-*.so.tar.gz'
 for f in *.so.tar.gz; do tar xzf "$f"; done
 
 # objdump reads both ELF and Mach-O and ships with Xcode CLT, so this works
@@ -137,11 +155,24 @@ users — update it if these change.
 ### 5. Generate the checksum file
 
 ```bash
+cd -                                   # back to the repo root
+rm -f checksum-Elixir.LibRaw.NIF.exs   # entries are keyed by filename, and
+                                       # every filename changed with the version
 mix rustler_precompiled.download LibRaw.NIF --all --print
+
+grep -c '=>' checksum-Elixir.LibRaw.NIF.exs                 # 12
+grep -c -- "-v$VERSION-nif-" checksum-Elixir.LibRaw.NIF.exs  # 12
 ```
 
 This downloads every artifact from the release you just published and writes
 `checksum-Elixir.LibRaw.NIF.exs` into the repo root.
+
+Delete it first. A *successful* run rewrites the file wholesale, so a leftover
+would be overwritten anyway — but a **failed** run never reaches the write at
+all. The task raises on the first 404, which means a mistimed run (assets not
+uploaded yet, wrong tag) leaves the *previous* version's file sitting in place,
+looking perfectly valid. Publish that and every consumer fails checksum
+verification. Deleting first turns that silent failure into a loud one.
 
 - It is **gitignored** (see `.gitignore`) — do not commit it.
 - It **is** shipped in the Hex package via the `files` list in `mix.exs`
@@ -210,11 +241,15 @@ The promotion is a full rebuild:
    the release date, drop the RC preamble, and update the compare link at the
    bottom. The entry already carries the full 0.3.0 content — the RC is not a
    separate entry.
-3. Commit, then tag `v0.3.0` and push (a **new** tag — do not move `v0.3.0-rc1`).
-4. Wait for all 12 matrix jobs again; confirm 24 assets on the `v0.3.0` release.
-5. Re-run `mix rustler_precompiled.download LibRaw.NIF --all --print` — the old
-   checksum file is stale, since every filename changed.
-6. `mix hex.publish`.
+3. Strip the RC pinning callout from `README.md`. It tells readers `~> 0.3`
+   resolves to nothing, which becomes false the moment the final publishes —
+   and it ships to Hex *and* hexdocs, so stale advice there is user-facing.
+4. Commit, then tag `v0.3.0` and push (a **new** tag — do not move `v0.3.0-rc1`).
+5. Wait for all 12 matrix jobs again; confirm 24 assets on the `v0.3.0` release,
+   and re-run the ABI check.
+6. `rm` the old checksum file and re-run the download task; every filename
+   changed, so the RC's file is entirely stale.
+7. `mix hex.publish`.
 
 Keep the RC release and its tag around; they are harmless and anyone who pinned
 `"0.3.0-rc1"` still resolves.
