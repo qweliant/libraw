@@ -8,7 +8,7 @@ name = "libraw_nif"
 crate-type = ["cdylib"]
 
 [dependencies]
-rustler = "0.37"
+rustler = "0.38"
 
 # rustler-precompiled-action selects the target NIF version by activating
 # one of these features; each must forward to the matching rustler feature.
