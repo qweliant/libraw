@@ -34,7 +34,7 @@ jobs:
           - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # rustler-precompiled-action prepends "v" itself, and RustlerPrecompiled
       # downloads by the mix.exs version — so pass the bare version, never the
@@ -84,7 +84,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
