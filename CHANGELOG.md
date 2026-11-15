@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1-rc1] - 2026-11-15
+
+Release candidate for 0.3.1. No API changes; this re-runs the release pipeline
+against updated GitHub Actions and `rustler_precompiled` before cutting the
+final. Testers must pin `{:libraw, "0.3.1-rc1"}` (`~> 0.3` will not resolve to
+a prerelease).
+
+### Changed
+
+- `rustler` crate 0.37 → 0.39 (`OwnedBinary::new` is now infallible). Hex
+  `rustler` 0.37 → 0.38 (latest on Hex); source builds should now use
+  `{:rustler, "~> 0.38", runtime: false}`.
+- `rustler_precompiled` 0.9 → 0.10.1 in the lockfile. 0.10.1 fixes artifact
+  downloads failing with `header_too_long` on GitHub redirects. The dependency
+  requirement is unchanged (`~> 0.8`), so consumers already resolve to it.
+- Release workflow: `actions/checkout` 7, `actions/cache` 6,
+  `actions/upload-artifact` 7, `actions/download-artifact` 8.
+- `cc` / `pkg-config` build-dependency bumps; `ex_doc` 0.40.4.
+
+### Notes
+
+- `rustler_precompiled` 0.10 declares `elixir: "~> 1.16"`. On Elixir 1.15 Mix
+  warns about this but still compiles; the 1.15 floor is unchanged and CI keeps
+  testing it.
+
 ## [0.3.0] - 2026-08-01
 
 ### Added
@@ -80,6 +105,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Thin `wrapper.c` shim avoids bindgen / struct-offset breakage across
   libraw 0.20 / 0.21 / 0.22.
 
+[0.3.1-rc1]: https://github.com/qweliant/libraw/compare/v0.3.0...v0.3.1-rc1
 [0.3.0]: https://github.com/qweliant/libraw/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/qweliant/libraw/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/qweliant/libraw/releases/tag/v0.1.0

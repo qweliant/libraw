@@ -22,8 +22,7 @@ apt install libraw-dev
 > library. See the [libraw license](https://www.libraw.org/license) for
 > details.
 
-Elixir **1.15 or later** is required (`rustler_precompiled` itself declares
-`~> 1.15`).
+Elixir **1.15 or later** is required (`rustler` itself declares `~> 1.15`).
 
 A **Rust toolchain is not required** for the targets listed under *Supported
 Platforms* below. For unsupported targets the package falls back to compiling
@@ -84,7 +83,7 @@ the precompiled path. A source build needs it in **your** dependency list:
 def deps do
   [
     {:libraw, "~> 0.3"},
-    {:rustler, "~> 0.37", runtime: false}
+    {:rustler, "~> 0.38", runtime: false}
   ]
 end
 ```
@@ -166,7 +165,7 @@ lib/
     nif.ex            use RustlerPrecompiled + NIF stubs (nif_not_loaded fallbacks)
 native/
   libraw_nif/
-    Cargo.toml        deps: rustler = "0.37"; build-deps: cc = "1", pkg-config = "0.3"
+    Cargo.toml        deps: rustler = "0.39"; build-deps: cc = "1", pkg-config = "0.3"
     build.rs          pkg_config::probe("libraw") for dynamic linking; cc::Build compiles wrapper.c
     src/
       lib.rs          rustler::init! and two #[rustler::nif(schedule = "DirtyCpu")] functions
