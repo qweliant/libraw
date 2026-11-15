@@ -66,8 +66,7 @@ fn decode_inner<'a>(
     let img = handle.make_mem_image()?;
 
     let pixels = img.as_slice();
-    let mut bin = OwnedBinary::new(pixels.len())
-        .ok_or(LibRawError::NullPointer)?;
+    let mut bin = OwnedBinary::new(pixels.len());
     bin.as_mut_slice().copy_from_slice(pixels);
 
     let map = map_new(env);

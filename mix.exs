@@ -38,7 +38,7 @@ defmodule LibRaw.MixProject do
       # Optional: only needed for source builds (LIBRAW_BUILD=1 or an
       # unsupported target). Keeping it optional means consumers on a
       # precompiled target don't pull rustler + jason into their dep tree.
-      {:rustler, "~> 0.37", runtime: false, optional: true},
+      {:rustler, "~> 0.38", runtime: false, optional: true},
       {:rustler_precompiled, "~> 0.8"},
       {:ex_doc, "~> 0.31", only: :dev, runtime: false}
     ]
