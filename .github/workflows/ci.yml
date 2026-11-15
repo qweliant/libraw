@@ -26,7 +26,7 @@ jobs:
           - { elixir: "1.18", otp: "27" }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # ubuntu-24.04 provides libraw 0.21 (libraw.so.23) — the same ABI the
       # release workflow links against. Keep these two in sync.
@@ -72,7 +72,7 @@ jobs:
     name: mix format
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: erlef/setup-beam@v1
         with:
           elixir-version: "1.18"
@@ -83,7 +83,7 @@ jobs:
     name: macOS build
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # macOS has caught breakage the Linux jobs missed before (the release
       # pipeline's cross-install step failed only here, on BSD tar).
