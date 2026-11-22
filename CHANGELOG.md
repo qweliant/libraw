@@ -5,12 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.1-rc1] - 2026-11-15
+## [0.3.1] - 2026-11-22
 
-Release candidate for 0.3.1. No API changes; this re-runs the release pipeline
-against updated GitHub Actions and `rustler_precompiled` before cutting the
-final. Testers must pin `{:libraw, "0.3.1-rc1"}` (`~> 0.3` will not resolve to
-a prerelease).
+Dependency and release-tooling refresh. No API changes.
 
 ### Changed
 
@@ -105,7 +102,7 @@ a prerelease).
 - Thin `wrapper.c` shim avoids bindgen / struct-offset breakage across
   libraw 0.20 / 0.21 / 0.22.
 
-[0.3.1-rc1]: https://github.com/qweliant/libraw/compare/v0.3.0...v0.3.1-rc1
+[0.3.1]: https://github.com/qweliant/libraw/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/qweliant/libraw/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/qweliant/libraw/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/qweliant/libraw/releases/tag/v0.1.0
